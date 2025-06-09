@@ -18,6 +18,7 @@ export const createUser = async (body, navigate) => {
 			return true
 		} else {
 			toast.error(data?.msg)
+			console.log(data)
 			return false
 		}
 	} catch (err) {
