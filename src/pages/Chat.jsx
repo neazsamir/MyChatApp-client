@@ -71,19 +71,29 @@ export const Chat = () => {
 	const active = diffMinutes <= 3
 
 	const handleSendMessage = async () => {
-		if (!messageText.trim()) return
-		setChatData((p) => [...p, newMessage])
-		setMessageText("")
-		// Realtime emit
-		socket.emit("chat", {
-			reciever: friend?._id,
-			text: messageText,
-			sender: user?._id
-		})
-
-		// Save to DB
-		const newMessage = await sendMessage(friend?._id, messageText)
+	if (!messageText.trim()) return
+	const tempId = Date.now()
+	const tempMessage = {
+		_id: tempId,
+		text: messageText,
+		senderId: user._id
 	}
+	setChatData((p) => [...p, tempMessage])
+	setMessageText("")
+	socket.emit("chat", {
+		reciever: friend?._id,
+		text: messageText,
+		sender: user?._id
+	})
+	try {
+		const newMessage = await sendMessage(friend?._id, messageText)
+		setChatData((prev) =>
+			prev.map((msg) => (msg._id === tempId ? newMessage : msg))
+		)
+	} catch (err) {
+		console.error("Failed to send message:", err)
+	}
+}
 
 	return (
 		!loading && user && (
