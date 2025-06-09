@@ -1,6 +1,6 @@
 export const getChatData = async (id) => {
 	try {
-		const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/message/${id}`, { credentials: 'include' })
+		const res = await fetch(`https://mychatapp-server-1.onrender.com/api/message/${id}`, { credentials: 'include' })
 		const data = await res.json()
 		return data.messages
 	} catch (e) {

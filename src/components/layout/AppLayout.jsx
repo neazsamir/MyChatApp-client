@@ -12,7 +12,7 @@ export const AppLayout = () => {
   const navigate = useNavigate()
   const { loading, setLoading } = useAppContext()
   const { user, setUser } = useAuthContext()
-  const API = `${import.meta.env.VITE_BASE_URL}/api`
+  const API = `https://mychatapp-server-1.onrender.com/api`
   
   const getUser = async () => {
   	setLoading(true)

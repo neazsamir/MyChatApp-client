@@ -2,7 +2,7 @@ import { toast } from 'react-hot-toast'
 
 export const logout = async () => {
 	try {
-		const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/logout`, {
+		const res = await fetch(`https://mychatapp-server-1.onrender.com/api/auth/logout`, {
 		method: "POST",
 		credentials: 'include'
 		})

@@ -37,7 +37,7 @@ export const Profile = () => {
 		const uploadedUrl = await uploadAvatar(selectedImage)
 	if (uploadedUrl) {
 		// Send to backend
-		const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/auth/profile`, {
+		const res = await fetch(`https://mychatapp-server-1.onrender.com/api/auth/profile`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',

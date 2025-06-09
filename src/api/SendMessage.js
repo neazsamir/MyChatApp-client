@@ -3,7 +3,7 @@ import { toast } from 'react-hot-toast'
 export const sendMessage = async (reciever, text, image) => {
 	if (!image && !text.trim()) return
 	try {
-		const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/message/${reciever}`, {
+		const res = await fetch(`https://mychatapp-server-1.onrender.com/api/message/${reciever}`, {
 			headers: {
 				"Content-Type": "application/json",
 			},

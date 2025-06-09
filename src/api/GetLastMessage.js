@@ -1,6 +1,6 @@
 export const getLastMessage = async (friendId) => {
 	try {
-		const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/message/lastMessage/${friendId}`, {
+		const res = await fetch(`https://mychatapp-server-1.onrender.com/api/message/lastMessage/${friendId}`, {
 			headers: {
 				"Content-Type": "application/json"
 			},

@@ -1,6 +1,6 @@
 const getAllFriends = async () => {
 	try {
-		const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/message/friends`, {
+		const res = await fetch(`https://mychatapp-server-1.onrender.com/api/message/friends`, {
 			credentials: 'include'
 		})
 		const data = await res.json()

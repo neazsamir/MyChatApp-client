@@ -10,7 +10,7 @@ import { getChatData } from '../api/GetChatData.js'
 import { sendMessage } from '../api/SendMessage.js'
 import { io } from 'socket.io-client'
 
-const socket = io(import.meta.env.VITE_BASE_URL)
+const socket = io("https://mychatapp-server-1.onrender.com/")
 
 
 export const Chat = () => {

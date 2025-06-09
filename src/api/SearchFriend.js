@@ -1,6 +1,6 @@
 export const searchFriend = async (query) => {
 	try {
-		const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/message/searchFriend/?query=${query}`, {
+		const res = await fetch(`https://mychatapp-server-1.onrender.com/api/message/searchFriend/?query=${query}`, {
 			credentials: 'include'
 		})
 		const data = await res.json()
