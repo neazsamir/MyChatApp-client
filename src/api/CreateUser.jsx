@@ -4,7 +4,7 @@ import { registerSchema } from '../validators/register.validateor.js'
 export const createUser = async (body, navigate) => {
 	try {
 	const userData = await registerSchema.parseAsync(body)
-		const res = await fetch(`https://mychatapp-server-1.onrender.com//api/auth/register`, {
+		const res = await fetch(`https://mychatapp-server-1.onrender.com/api/auth/register`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
