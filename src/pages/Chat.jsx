@@ -12,7 +12,6 @@ import { io } from 'socket.io-client'
 
 const socket = io("https://mychatapp-server-1.onrender.com/")
 
-
 export const Chat = () => {
 	const [friend, setFriend] = useState(null)
 	const [chatData, setChatData] = useState([])
@@ -36,16 +35,33 @@ export const Chat = () => {
 			} catch (e) {}
 		}
 		if (!user) return
-			fetchFriendData()
-			fetchChatData()
+		fetchFriendData()
+		fetchChatData()
 		socket.emit("register", user._id)
-	}, [user])
+	}, [user, params.id])
 
+	// Realtime listener
+	useEffect(() => {
+		if (!user || !friend) return
 
+		const handleIncomingMessage = (data) => {
+			console.log("📥 Message received:", data)
+			setChatData((prev) => [...prev, {
+				text: data.text,
+				senderId: data.sender,
+				_id: Date.now(), // temporary id
+			}])
+		}
 
+		socket.on("chat", handleIncomingMessage)
+
+		return () => {
+			socket.off("chat", handleIncomingMessage)
+		}
+	}, [user, friend])
 
 	useEffect(() => {
-		bottomRef.current?.scrollIntoView()
+		bottomRef.current?.scrollIntoView({ behavior: "smooth" })
 	}, [chatData])
 
 	const lastSeen = new Date(friend?.lastSeen)?.getTime()
@@ -55,28 +71,27 @@ export const Chat = () => {
 	const active = diffMinutes <= 3
 
 	const handleSendMessage = async () => {
-	if (!messageText.trim()) return
+		if (!messageText.trim()) return
 
-	// Realtime emit
-	socket.emit("chat", {
-		reciever: friend?._id,
-		text: messageText,
-		sender: user?._id
-	})
+		// Realtime emit
+		socket.emit("chat", {
+			reciever: friend?._id,
+			text: messageText,
+			sender: user?._id
+		})
 
-	// Save to DB
-	const newMessage = await sendMessage(friend?._id, messageText)
-	if (newMessage) setChatData((p) => [...p, newMessage])
-	setMessageText("")
-}
-
+		// Save to DB
+		const newMessage = await sendMessage(friend?._id, messageText)
+		if (newMessage) setChatData((p) => [...p, newMessage])
+		setMessageText("")
+	}
 
 	return (
 		!loading && user && (
 			<div className="shadow-[0px_0px_30px_rgba(0,0,0,0.2)] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-6xl w-full md:rounded-xl h-screen md:h-[650px] md:flex gap-4 overflow-hidden">
 				<LeftSideBar className="hidden md:block" />
 				<div className="flex flex-grow h-full relative bg-white">
-					
+
 					{/* Header */}
 					{friend && chatData?.length > 0 && (
 						<div className="fixed md:absolute left-0 top-0 w-full py-3 px-4 flex items-center gap-3 shadow-sm border-b border-gray-200 bg-white z-10">
@@ -100,7 +115,7 @@ export const Chat = () => {
 								</div>
 							) : (
 								<ul className="flex flex-col gap-3 pb-4">
-									{chatData?.map(({ text, _id, senderId, seen }) => {
+									{chatData?.map(({ text, _id, senderId }) => {
 										const isMyMessage = senderId !== friend?._id
 										return (
 											<li
@@ -122,32 +137,32 @@ export const Chat = () => {
 					</div>
 
 					{/* Input */}
-					{
-					user && friend ?	(<div className="absolute bottom-0 left-0 w-full px-3 py-3 border-t border-gray-200 bg-white flex items-center gap-2">
-						<input
-							type="text"
-							value={messageText}
-							onChange={(e) => setMessageText(e.target.value)}
-							placeholder="Type a message..."
-							className="flex-grow py-2 px-4 rounded-full bg-gray-100 outline-none text-sm placeholder:text-gray-500"
-							required
-						/>
-						<button
-							onClick={handleSendMessage}
-							className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-colors"
-						>
-							<IoSend className="text-xl" />
-						</button>
-					</div>) : !loading && user && !friend ? (
-					<div className="bg-white fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center flex-col gap-4">
-						<h2 className="font-bold text-2xl">User does not exist</h2>
-					</div>
+					{user && friend ? (
+						<div className="absolute bottom-0 left-0 w-full px-3 py-3 border-t border-gray-200 bg-white flex items-center gap-2">
+							<input
+								type="text"
+								value={messageText}
+								onChange={(e) => setMessageText(e.target.value)}
+								placeholder="Type a message..."
+								className="flex-grow py-2 px-4 rounded-full bg-gray-100 outline-none text-sm placeholder:text-gray-500"
+								required
+							/>
+							<button
+								onClick={handleSendMessage}
+								className="p-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+							>
+								<IoSend className="text-xl" />
+							</button>
+						</div>
+					) : !loading && user && !friend ? (
+						<div className="bg-white fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center flex-col gap-4">
+							<h2 className="font-bold text-2xl">User does not exist</h2>
+						</div>
 					) : (
 						<div className="bg-white fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center flex-col gap-4">
-						<h2 className="font-bold text-2xl">Something went wrong</h2>
-					</div>
-						)
-					}
+							<h2 className="font-bold text-2xl">Something went wrong</h2>
+						</div>
+					)}
 				</div>
 			</div>
 		)
