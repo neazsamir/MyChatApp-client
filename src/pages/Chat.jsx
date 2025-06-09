@@ -61,7 +61,7 @@ export const Chat = () => {
 	}, [user, friend])
 
 	useEffect(() => {
-		bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+		bottomRef.current?.scrollIntoView()
 	}, [chatData])
 
 	const lastSeen = new Date(friend?.lastSeen)?.getTime()
@@ -72,6 +72,10 @@ export const Chat = () => {
 
 	const handleSendMessage = async () => {
 		if (!messageText.trim()) return
+		// Save to DB
+		const newMessage = await sendMessage(friend?._id, messageText?.trim())
+		if (newMessage) setChatData((p) => [...p, newMessage])
+		setMessageText("")
 
 		// Realtime emit
 		socket.emit("chat", {
@@ -80,10 +84,6 @@ export const Chat = () => {
 			sender: user?._id
 		})
 
-		// Save to DB
-		const newMessage = await sendMessage(friend?._id, messageText)
-		if (newMessage) setChatData((p) => [...p, newMessage])
-		setMessageText("")
 	}
 
 	return (
