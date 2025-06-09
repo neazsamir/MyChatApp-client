@@ -10,7 +10,7 @@ import { getChatData } from '../api/GetChatData.js'
 import { sendMessage } from '../api/SendMessage.js'
 import { io } from 'socket.io-client'
 
-const socket = io("http://localhost:3000")
+const socket = io(import.meta.env.VITE_BASE_URL)
 
 
 export const Chat = () => {
